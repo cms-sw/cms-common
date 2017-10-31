@@ -1,0 +1,40 @@
+#!/bin/sh
+cms_basedir=@CMS_PREFIX@
+sver=$SCRAM_VERSION
+dir=$(/bin/pwd)
+if [ "X${dir}" = "X" ] ; then
+  echo "Unable to find current working directory, may be directory was deleted." >&2
+  exit 1
+fi
+while [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] ; do
+  dir=$(dirname $dir)
+done
+if [ "${dir}" != "/" ] ; then
+  if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
+  if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
+fi
+if [ "X$sver" = "X" ] ; then
+  if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
+    sver=$(cat ${cms_basedir}/share/etc/default-scramv1-version)
+  else
+    echo "Error: Unable to find ${cms_basedir}/share/etc/default-scramv1-version. Looks like SCRAMV1 is not installed." >&2
+    exit 1
+  fi
+fi
+scram_rel_series=$(echo $sver | grep '^V[0-9][0-9]*_[0-9][0-9]*_' | cut -d_ -f1,2)
+scram_main_series=$(echo $scram_rel_series | cut -d_ -f1)
+if [ "X${scram_rel_series}" != "X" ] ; then
+  if [ -f ${cms_basedir}/share/etc/default-scram/${scram_main_series} ] ; then
+    sver=$(cat ${cms_basedir}/share/etc/default-scram/${scram_main_series})
+  elif [ -f ${cms_basedir}/share/etc/default-scram/${scram_rel_series} ] ; then
+    sver=$(cat ${cms_basedir}/share/etc/default-scram/${scram_rel_series})
+  fi
+fi
+srbase=${cms_basedir}/share/lcg/SCRAMV1/${sver}
+if [ ! -f ${srbase}/etc/profile.d/init.sh ] ; then
+  echo "Unable to find SCRAM version $sver. Something wrong with the sw installation."  >&2
+  exit 1
+fi
+export SCRAM_ARCH=$(${cms_basedir}/common/cmsarch)
+. ${srbase}/etc/profile.d/init.sh
+${srbase}/bin/scram $@
