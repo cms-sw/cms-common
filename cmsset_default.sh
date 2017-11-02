@@ -14,7 +14,7 @@ fi
 if [ ! $SCRAM_ARCH ]
 then
     SCRAM_ARCH=$(${cms_basedir}/common/cmsarch)
-    if [ ! -d ${cms_basedir}/${SCRAM_ARCH}/etc/profile.d ]
+    if [ ! -d ${here}/${SCRAM_ARCH}/etc/profile.d ]
     then
       SCRAM_ARCH=@SCRAM_ARCH@
     fi
