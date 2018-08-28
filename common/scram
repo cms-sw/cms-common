@@ -7,9 +7,9 @@ if [ "X${dir}" = "X" ] ; then
   exit 1
 fi
 COUNT=1
-while [ $COUNT -le 20 ] && [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] && [ "$dir" != ""] && [ "$dir" != "."]; do
+while [ $COUNT -le 20 ] && [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] && [ "$dir" != "" ] && [ "$dir" != "." ]; do
   dir=$(dirname $dir)
-  (( $COUNT++ ))
+  (( COUNT++ ))
 done
 if [ "${dir}" != "/" ] ; then
   if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
