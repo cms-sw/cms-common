@@ -1,0 +1,42 @@
+#!/bin/bash -e
+CMS_BASE=$(dirname $0)
+CMSOS=$(cmsos)
+CRAB_PKG=$(basename $0)
+if [ "${CRAB_PKG}" = "crab-prod" ] ; then CRAB_PKG="crab" ; fi
+if [ "${CRAB_VERSION}" = "" ] ; then
+  CRAB_VERSION=$(ls -d ${CMS_BASE}/${CMSOS}_gcc*/cms/${CRAB_PKG}/*/etc/profile.d/init.sh | sed "s|^.*/cms/${CRAB_PKG}/||;s|/.*||" | sort | tail -1)
+fi
+CRAB_DIR=$(ls -d ${CMS_BASE}/${CMSOS}_gcc*/cms/${CRAB_PKG}/${CRAB_VERSION}/etc/profile.d/init.sh | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
+CRAB_ENV="${CRAB_DIR}/etc/profile.d/init.sh"
+
+## Determine if this is a submit command.
+SUBMIT=false;
+for i in "$@"; do
+  if [ "$i" = "submit" ] || [ "$i" = "sub" ]; then
+    SUBMIT=true;
+  fi
+done
+
+ERR=0
+## If it is a submit command run the bootstrap script
+if $SUBMIT ; then
+  CRAB_PYTHONPATH=$(source $CRAB_ENV;  echo ${PYTHON_LIB_SITE_PACKAGES})
+  BOOTSTRAP_OUT=$(PYTHONPATH=${CRAB_DIR}/${CRAB_PYTHONPATH}:${PYTHONPATH} ${CRAB_DIR}/bin/crab3bootstrap $@) || ERR=$?
+  if [ $ERR -ne 0 ]; then
+    echo "$BOOTSTRAP_OUT"
+    exit $ERR
+  fi
+  ## The submit command will know what to do if this variable is set! See TODO: add link to an hypothetical twiki
+  export CRAB3_BOOTSTRAP_DIR="$BOOTSTRAP_OUT"
+fi
+
+## Execute the client command in a pure COMP environment
+eval `scram unset -sh`
+source $CRAB_ENV
+
+${CRAB_DIR}/bin/crab "$@" || ERR=$?
+
+## Remove the temporary direcotry, but only if we run the bootstrap script
+[ -z "$CRAB3_BOOTSTRAP_DIR" ] || rm -rf "$CRAB3_BOOTSTRAP_DIR"
+
+exit $ERR
