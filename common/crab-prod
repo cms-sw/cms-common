@@ -2,7 +2,7 @@
 cms_basedir="@CMS_PREFIX@"
 CRAB_PKG=$(basename $0)
 if [ "${SCRAMRT_SET}" = "" ] ; then
-  echo "Error: Please set SCRAM/CMSSW runtime environment before running crab" >2
+  >&2 echo "Error: Please set SCRAM/CMSSW runtime environment before running crab"
   exit 1
 fi
 export SCRAM_PROJECT_BASE="${CMSSW_BASE}"
