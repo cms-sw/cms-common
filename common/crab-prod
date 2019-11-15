@@ -1,12 +1,17 @@
 #!/bin/bash -e
-CMS_BASE="@CMS_PREFIX@"
-CMSOS=$(cmsos)
+cms_basedir="@CMS_PREFIX@"
 CRAB_PKG=$(basename $0)
+if [ "${SCRAMRT_SET}" = "" ] ; then
+  echo "Error: Please set SCRAM/CMSSW runtime environment before running crab" >2
+  exit 1
+fi
+export SCRAM_PROJECT_BASE="${CMSSW_BASE}"
+CMSOS=$(${cms_basedir}/common/cmsos)
 if [ "${CRAB_PKG}" = "crab-prod" ] ; then CRAB_PKG="crab" ; fi
 if [ "${CRAB_VERSION}" = "" ] ; then
-  CRAB_VERSION=$(ls -d ${CMS_BASE}/${CMSOS}_gcc*/cms/${CRAB_PKG}/*/etc/profile.d/init.sh | sed "s|^.*/cms/${CRAB_PKG}/||;s|/.*||" | sort | tail -1)
+  CRAB_VERSION=$(ls -d ${cms_basedir}/${CMSOS}_gcc*/cms/${CRAB_PKG}/*/etc/profile.d/init.sh | sed "s|^.*/cms/${CRAB_PKG}/||;s|/.*||" | sort | tail -1)
 fi
-CRAB_DIR=$(ls -d ${CMS_BASE}/${CMSOS}_gcc*/cms/${CRAB_PKG}/${CRAB_VERSION}/etc/profile.d/init.sh | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
+CRAB_DIR=$(ls -d ${cms_basedir}/${CMSOS}_gcc*/cms/${CRAB_PKG}/${CRAB_VERSION}/etc/profile.d/init.sh | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
 source ${CRAB_DIR}/etc/profile.d/init.sh
 export CRAB_VERSION=${CRAB_VERSION}
 
