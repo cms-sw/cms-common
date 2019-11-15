@@ -1,6 +1,6 @@
 cms_basedir=@CMS_PREFIX@
 here=${cms_basedir}
-export PATH=${cms_basedir}/common:${cms_basedir}/bin:$PATH
+export PATH=${cms_basedir}/common:$PATH
 
 if [ "$VO_CMS_SW_DIR" != ""  ]
 then

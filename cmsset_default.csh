@@ -1,8 +1,8 @@
 set cms_basedir=@CMS_PREFIX@
 if (${?PATH}) then
-    setenv PATH ${cms_basedir}/common:${cms_basedir}/bin:$PATH
+    setenv PATH ${cms_basedir}/common:$PATH
 else
-    setenv PATH ${cms_basedir}/common:${cms_basedir}/bin
+    setenv PATH ${cms_basedir}/common
 endif
 
 set here=${cms_basedir}
