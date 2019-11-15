@@ -8,6 +8,7 @@ if [ "${CRAB_VERSION}" = "" ] ; then
 fi
 CRAB_DIR=$(ls -d ${CMS_BASE}/${CMSOS}_gcc*/cms/${CRAB_PKG}/${CRAB_VERSION}/etc/profile.d/init.sh | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
 source ${CRAB_DIR}/etc/profile.d/init.sh
+export CRAB_VERSION=${CRAB_VERSION}
 
 ## Determine if this is a submit command.
 SUBMIT=false;
