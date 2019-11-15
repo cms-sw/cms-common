@@ -16,23 +16,24 @@ source ${CRAB_DIR}/etc/profile.d/init.sh
 export CRAB_VERSION=${CRAB_VERSION}
 
 ## Determine if this is a submit command.
-SUBMIT=false;
+SUBMIT=false
 for i in "$@"; do
-  if [ "$i" = "submit" ] || [ "$i" = "sub" ]; then
-    SUBMIT=true;
+  if [ "$i" = "submit" ] || [ "$i" = "sub" ] ; then
+    SUBMIT=true
+    break
   fi
 done
 
-ERR=0
-
 ## If it is a submit command run the bootstrap script
+ERR=0
 if $SUBMIT ; then
   BOOTSTRAP_OUT=$(${CRAB_DIR}/bin/crab3bootstrap $@) || ERR=$?
   if [ $ERR -ne 0 ]; then
     echo "$BOOTSTRAP_OUT"
     exit $ERR
   fi
-  ## The submit command will know what to do if this variable is set! See TODO: add link to an hypothetical twiki
+  ## The submit command will know what to do if this variable is set!
+  ## See TODO: add link to an hypothetical twiki
   export CRAB3_BOOTSTRAP_DIR="$BOOTSTRAP_OUT"
 fi
 
