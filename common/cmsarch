@@ -4,31 +4,22 @@
 if [ ! "$SCRAM_ARCH" ]
 then
     osarch=`@CMS_PREFIX@/common/cmsos`
-    compilerv=gcc462
+    compilerv=gcc820
     case $osarch in
-        osx104_ia32) compilerv=gcc401 ;;
-        osx104_ppc32) compilerv=gcc400 ;;
-        osx105_*) compilerv=gcc401 ;;
-        osx106_*) compilerv=gcc421 ;;
-        osx107_*) compilerv=gcc462 ;;
-        osx108_*) compilerv=gcc472 ;;
-        slc6_*) compilerv=gcc472; osarch=slc6_amd64 ;;
-        slc5_*) compilerv=gcc462; osarch=slc5_amd64 ;;
-        fc18_*) compilerv=gcc481; osarch=fc18_armv7hl ;;
-        fc19_armv7hl) compilerv=gcc481; osarch=fc19_armv7hl ;;
-        fc19_aarch64) compilerv=gcc490; osarch=fc19_aarch64 ;;
-        fc22_ppc64le) compilerv=gcc530; osarch=fc22_ppc64le ;;
-        fc24_ppc64le) compilerv=gcc620; osarch=fc24_ppc64le ;;
-        fc22_ppc64) compilerv=gcc600; osarch=fc22_ppc64 ;;
-        fc24_ppc64) compilerv=gcc600; osarch=fc24_ppc64 ;;
-        slc7_aarch64) compilerv=gcc530; osarch=slc7_aarch64 ;;
-        slc7_ppc64le) compilerv=gcc530; osarch=slc7_ppc64le ;;
-        slc7_*) compilerv=gcc493; osarch=slc7_amd64 ;;
-        fc24_amd64) compilerv=gcc600; osarch=fc24_amd64 ;;
-        *) compilerv=gcc481; osarch=slc6_amd64 ;;
+        osx*)         compilerv=gcc$(gcc -dumpversion | sed 's|\.||g') ;;
+        fc18_*)       compilerv=gcc491 ;;
+        fc19_armv7hl) compilerv=gcc481 ;;
+        fc19_aarch64) compilerv=gcc490 ;;
+        fc22_ppc64le) compilerv=gcc530 ;;
+        fc24_ppc64le) compilerv=gcc620 ;;
+        slc5_ia32)    compilerv=gcc434 ;;
+        slc5_*)       compilerv=gcc481 ;;
+        slc6_*)       compilerv=gcc700 ;;
+        slc7_*)       compilerv=gcc820 ;;
+        cc8_* )       compilerv=gcc8   ;;
+        *)            compilerv=gcc820 ;;
     esac
     echo ${osarch}_${compilerv}
 else
     echo $SCRAM_ARCH
 fi
-
