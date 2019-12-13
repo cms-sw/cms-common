@@ -1,23 +1,31 @@
 #!/bin/bash -e
-cms_basedir="@CMS_PREFIX@"
-CRAB_PKG=$(basename $0)
-if [ "${SCRAMRT_SET}" = "" ] ; then
-  >&2 echo "Error: Please set SCRAM/CMSSW runtime environment before running crab"
-  exit 1
+if [ -z "${CMS_CRAB_PATH}" ] ; then
+  if [ "${SCRAMRT_SET}" = "" ] ; then
+    >&2 echo "Error: Please set SCRAM/CMSSW runtime environment before running crab"
+    exit 1
+  fi
+  export CRAB_SCRAM_PROJECT="${CMSSW_BASE}"
+  cms_basedir="@CMS_PREFIX@"
+  crab_pkg=$(basename $0)
+  if [ "${crab_pkg}" = "crab-prod" ] ; then crab_pkg="crab" ; fi
+  crab_arch=$(echo "${SCRAMRT_SET}" | cut -d: -f3)
+  crab_dir=$(ls -d ${cms_basedir}/${crab_arch}/cms/${crab_pkg}/*/etc/profile.d/init.sh 2>/dev/null | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
+  if [ -z "${crab_dir}" ] ; then
+    crab_arch=$(echo "${crab_arch}" | cut -d_ -f1,2)
+    crab_dir=$(ls -d ${cms_basedir}/${crab_arch}_gcc*/cms/${crab_pkg}/*/etc/profile.d/init.sh 2>/dev/null | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
+    if [ -z "${crab_dir}" ] ; then
+      >&2 echo "Error: Unable to find '${crab_pkg}' installation for '${crab_arch}' architecture"
+      exit 1
+    fi
+  fi
+  export CMS_CRAB_PATH="${crab_dir}"
+  export CRAB_VERSION=$(basename ${crab_dir})
 fi
-export SCRAM_PROJECT_BASE="${CMSSW_BASE}"
-CMSOS=$(${cms_basedir}/common/cmsos)
-if [ "${CRAB_PKG}" = "crab-prod" ] ; then CRAB_PKG="crab" ; fi
-if [ "${CRAB_VERSION}" = "" ] ; then
-  CRAB_VERSION=$(ls -d ${cms_basedir}/${CMSOS}_gcc*/cms/${CRAB_PKG}/*/etc/profile.d/init.sh | sed "s|^.*/cms/${CRAB_PKG}/||;s|/.*||" | sort | tail -1)
-fi
-CRAB_DIR=$(ls -d ${cms_basedir}/${CMSOS}_gcc*/cms/${CRAB_PKG}/${CRAB_VERSION}/etc/profile.d/init.sh | sed 's|/etc/profile.d/init.sh$||' | sort | tail -1)
-export CRAB_VERSION=${CRAB_VERSION}
 
 ## If it is a submit command run the bootstrap script
 ERR=0
 if [ $(echo "$@" | tr ' ' '\n' | grep 'sub\|submit' | wc -l) -gt 0 ] ; then
-  BOOTSTRAP_OUT=$(source ${CRAB_DIR}/etc/profile.d/init.sh >/dev/null 2>&1; ${CRAB_DIR}/bin/crab3bootstrap $@) || ERR=$?
+  BOOTSTRAP_OUT=$(source ${CMS_CRAB_PATH}/etc/profile.d/init.sh >/dev/null 2>&1; ${CMS_CRAB_PATH}/bin/crab3bootstrap $@) || ERR=$?
   if [ $ERR -ne 0 ]; then
     echo "$BOOTSTRAP_OUT"
     exit $ERR
@@ -28,12 +36,12 @@ if [ $(echo "$@" | tr ' ' '\n' | grep 'sub\|submit' | wc -l) -gt 0 ] ; then
 fi
 
 eval `scram unset -sh`
-source ${CRAB_DIR}/etc/profile.d/init.sh
+source ${CMS_CRAB_PATH}/etc/profile.d/init.sh
 
 ## Execute the client command in a pure COMP environment
-${CRAB_DIR}/bin/crab "$@" || ERR=$?
+${CMS_CRAB_PATH}/bin/crab "$@" || ERR=$?
 
 ## Remove the temporary direcotry, but only if we run the bootstrap script
-[ -z "$CRAB3_BOOTSTRAP_DIR" ] || rm -rf "$CRAB3_BOOTSTRAP_DIR"
+[ -z "${CRAB3_BOOTSTRAP_DIR}" ] || rm -rf "${CRAB3_BOOTSTRAP_DIR}"
 
 exit $ERR
