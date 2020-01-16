@@ -21,13 +21,15 @@ then
     export SCRAM_ARCH
 fi
 
-if [ -d $here/${SCRAM_ARCH}/etc/profile.d ]
-then
-  for pkg in $(/bin/ls $here/${SCRAM_ARCH}/etc/profile.d/ | grep 'S.*[.]sh')
-  do
-        source $here/${SCRAM_ARCH}/etc/profile.d/$pkg
-  done
-fi
+for arch in share ${SCRAM_ARCH} ; do
+  if [ -d $here/${arch}/etc/profile.d ]
+  then
+    for pkg in $(/bin/ls $here/${arch}/etc/profile.d/ | grep 'S.*[.]sh')
+    do
+          source $here/${arch}/etc/profile.d/$pkg
+    done
+  fi
+done
 
 if [ ! $CMS_PATH ]
 then

@@ -22,11 +22,13 @@ if ( ! ${?SCRAM_ARCH}) then
     endif
 endif
 
-if ( -d $here/${SCRAM_ARCH}/etc/profile.d ) then
-  foreach pkg ( `/bin/ls ${here}/${SCRAM_ARCH}/etc/profile.d/ | grep 'S.*[.]csh'` )
-        source ${here}/${SCRAM_ARCH}/etc/profile.d/$pkg
-  end
-endif
+foreach arch (share ${SCRAM_ARCH})
+  if ( -d $here/${arch}/etc/profile.d ) then
+    foreach pkg ( `/bin/ls ${here}/${arch}/etc/profile.d/ | grep 'S.*[.]csh'` )
+          source ${here}/${arch}/etc/profile.d/$pkg
+    end
+  endif
+end
 
 if ( ! ${?CMS_PATH} ) then
     setenv CMS_PATH $here
