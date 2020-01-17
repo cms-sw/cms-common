@@ -28,6 +28,7 @@ for arch in share ${SCRAM_ARCH} ; do
     do
           source $here/${arch}/etc/profile.d/$pkg
     done
+    unset pkg
   fi
 done
 
@@ -52,3 +53,4 @@ fi
 
 MANPATH=${CMS_PATH}/share/man:${MANPATH}
 export MANPATH
+unset here cms_basedir arch

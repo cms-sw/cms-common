@@ -28,6 +28,7 @@ foreach arch (share ${SCRAM_ARCH})
           source ${here}/${arch}/etc/profile.d/$pkg
     end
   endif
+  unset pkg
 end
 
 if ( ! ${?CMS_PATH} ) then
@@ -52,6 +53,4 @@ else
   setenv MANPATH $CMS_PATH/share/man
 endif
 
-unset here
-unset cms_basedir
-
+unset here cms_basedir arch
