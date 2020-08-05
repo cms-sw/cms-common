@@ -1,6 +1,7 @@
 #!/bin/sh
 cms_basedir=@CMS_PREFIX@
 sver=$SCRAM_VERSION
+if [ "X${sver}" = "X" ] ; then sver="V2_99_99" ; fi
 dir=$(/bin/pwd)
 if [ "X${dir}" = "X" ] ; then
   echo "Unable to find current working directory, may be directory was deleted." >&2
