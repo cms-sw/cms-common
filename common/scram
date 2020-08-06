@@ -1,20 +1,23 @@
 #!/bin/sh
 cms_basedir=@CMS_PREFIX@
 sver=$SCRAM_VERSION
-if [ "X${sver}" = "X" ] ; then sver="V2_99_99" ; fi
-dir=$(/bin/pwd)
-if [ "X${dir}" = "X" ] ; then
-  echo "Unable to find current working directory, may be directory was deleted." >&2
-  exit 1
-fi
-COUNT=1
-while [ $COUNT -le 20 ] && [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] && [ "$dir" != "" ] && [ "$dir" != "." ]; do
-  dir=$(dirname $dir)
-  (( COUNT++ ))
-done
-if [ "${dir}" != "/" ] ; then
-  if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
-  if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
+if [ "X${sver}" = "X" ] ; then
+  dir=$(/bin/pwd)
+  if [ "X${dir}" = "X" ] ; then
+    echo "Unable to find current working directory, may be directory was deleted." >&2
+    exit 1
+  fi
+  COUNT=1
+  while [ $COUNT -le 20 ] && [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] && [ "$dir" != "" ] && [ "$dir" != "." ]; do
+    dir=$(dirname $dir)
+    (( COUNT++ ))
+  done
+  if [ "${dir}" != "/" ] ; then
+    if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
+    if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
+  fi
+else
+  sver="V2_99_99"
 fi
 if [ "X$sver" = "X" ] ; then
   if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
