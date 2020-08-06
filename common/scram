@@ -2,6 +2,8 @@
 cms_basedir=@CMS_PREFIX@
 sver=$SCRAM_VERSION
 if [ "X${sver}" = "X" ] ; then
+  #Force set sver to V2 so that default scram is always V2 (to avoid python3 deps)
+  sver="V2_99_99"
   dir=$(/bin/pwd)
   if [ "X${dir}" = "X" ] ; then
     echo "Unable to find current working directory, may be directory was deleted." >&2
@@ -16,8 +18,6 @@ if [ "X${sver}" = "X" ] ; then
     if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
     if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
   fi
-  #Force set sver to V2 so that default scram is always V2 (to avoid python3 deps)
-  if [ "X${sver}" = "X" ] ; then sver="V2_99_99" ; fi
   if [ "X$sver" = "X" ] ; then
     if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
       sver=$(cat ${cms_basedir}/share/etc/default-scramv1-version)
