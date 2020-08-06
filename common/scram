@@ -16,8 +16,7 @@ if [ "X${sver}" = "X" ] ; then
     if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
     if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
   fi
-else
-  sver="V2_99_99"
+  if [ "X${sver}" = "X" ] ; then sver="V2_99_99" ; fi
 fi
 if [ "X$sver" = "X" ] ; then
   if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
