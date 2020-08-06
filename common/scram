@@ -16,14 +16,15 @@ if [ "X${sver}" = "X" ] ; then
     if [ -f ${dir}/config/scram_basedir ] ; then cms_basedir=$(cat ${dir}/config/scram_basedir) ; fi
     if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
   fi
+  #Force set sver to V2 so that default scram is always V2 (to avoid python3 deps)
   if [ "X${sver}" = "X" ] ; then sver="V2_99_99" ; fi
-fi
-if [ "X$sver" = "X" ] ; then
-  if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
-    sver=$(cat ${cms_basedir}/share/etc/default-scramv1-version)
-  else
-    echo "Error: Unable to find ${cms_basedir}/share/etc/default-scramv1-version. Looks like SCRAMV1 is not installed." >&2
-    exit 1
+  if [ "X$sver" = "X" ] ; then
+    if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
+      sver=$(cat ${cms_basedir}/share/etc/default-scramv1-version)
+    else
+      echo "Error: Unable to find ${cms_basedir}/share/etc/default-scramv1-version. Looks like SCRAMV1 is not installed." >&2
+      exit 1
+    fi
   fi
 fi
 scram_rel_series=$(echo $sver | grep '^V[0-9][0-9]*_[0-9][0-9]*_' | cut -d_ -f1,2)
