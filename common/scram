@@ -3,7 +3,6 @@ cms_basedir=@CMS_PREFIX@
 sver=$SCRAM_VERSION
 if [ "X${sver}" = "X" ] ; then
   #Force set sver to V2 so that default scram is always V2 (to avoid python3 deps)
-  sver="V2_99_99"
   dir=$(/bin/pwd)
   if [ "X${dir}" = "X" ] ; then
     echo "Unable to find current working directory, may be directory was deleted." >&2
