@@ -35,6 +35,11 @@ if ( ! ${?CMS_PATH} ) then
     setenv CMS_PATH $here
 endif
 
+# decouple SITECONF location form CMS_PATH to allow sub-sites:
+if ( ! ${?SITECONFIG_PATH} ) then
+    setenv SITECONFIG_PATH ${CMS_PATH}/SITECONF/local
+endif
+
 # aliases
 alias cmsenv 'eval `scramv1 runtime -csh`'
 alias cmsrel 'scramv1 project CMSSW'
