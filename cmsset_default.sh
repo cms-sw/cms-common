@@ -37,6 +37,12 @@ then
     export CMS_PATH=$here
 fi
 
+# decouple SITECONF location form CMS_PATH to allow sub-sites:
+if [ ! $SITECONFIG_PATH ]
+then
+    export SITECONFIG_PATH=${CMS_PATH}/SITECONF/local
+fi
+
 # aliases
 alias cmsenv='eval `scramv1 runtime -sh`'
 alias cmsrel='scramv1 project CMSSW'
