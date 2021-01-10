@@ -47,8 +47,8 @@ fi
 alias cmsenv='eval `scramv1 runtime -sh`'
 alias cmsrel='scramv1 project CMSSW'
 
-if [ -f $CMS_PATH/SITECONF/local/JobConfig/cmsset_local.sh ]; then
-        . $CMS_PATH/SITECONF/local/JobConfig/cmsset_local.sh
+if [ -f $SITECONFIG_PATH/JobConfig/cmsset_local.sh ]; then
+        . $SITECONFIG_PATH/JobConfig/cmsset_local.sh
 fi
 
 if [ ! $CVSROOT ]
