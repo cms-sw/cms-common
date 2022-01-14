@@ -30,11 +30,14 @@ cmsos()
         os="slc"
         if egrep -q "CentOS" /etc/redhat-release 2>/dev/null; then
           if [ ${slc_version} -gt 7 ] ; then
+            os="cc"
             if egrep -q " Stream " /etc/redhat-release 2>/dev/null; then
               os="cs"
-            else
-              os="cc"
             fi
+          fi
+        elif egrep -q "Red Hat Enterprise" /etc/redhat-release 2>/dev/null; then
+          if [ ${slc_version} -gt 7 ] ; then
+            os="rhel"
           fi
         fi
         echo ${os}${slc_version}_${cpuarch}
