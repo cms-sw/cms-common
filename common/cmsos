@@ -16,9 +16,9 @@ cmsos()
  
   if [ "X$BUILD_ARCH" != X ]; then
       echo "$BUILD_ARCH"
-elif [ -f /etc/cmsos ] ; then
-  echo "$(cat /etc/cmsos)_${cpuarch}"
-elif [ "X`uname`" = XLinux ]; then
+  elif [ -f /etc/cmsos ] ; then
+      echo "$(cat /etc/cmsos)_${cpuarch}"
+  elif [ "X`uname`" = XLinux ]; then
     if [ -f /etc/SuSE-release ]; then
       echo suse`grep -i '^version' < /etc/SuSE-release | tr -dc '[0-9]'`
     elif [ -f /etc/fedora-release ]; then
