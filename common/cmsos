@@ -39,7 +39,7 @@ cmsos()
           fi
         elif egrep -q "Red Hat Enterprise" /etc/redhat-release 2>/dev/null; then
           if [ ${slc_version} -gt 7 ] ; then
-            os="rhel"
+            os="ubi"
           fi
         fi
         echo ${os}${slc_version}_${cpuarch}
