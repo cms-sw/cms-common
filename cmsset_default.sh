@@ -44,8 +44,10 @@ then
 fi
 
 # aliases
-alias cmsenv='eval `scramv1 runtime -sh`'
-alias cmsrel='scramv1 project CMSSW'
+cmsenv(){ eval `scramv1 runtime -sh` ; }
+cmsrel(){ scramv1 project CMSSW $@; }
+export -f cmsenv
+export -f cmsrel
 
 if [ -f $SITECONFIG_PATH/JobConfig/cmsset_local.sh ]; then
         . $SITECONFIG_PATH/JobConfig/cmsset_local.sh
