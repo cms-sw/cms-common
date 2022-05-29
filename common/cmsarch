@@ -15,9 +15,7 @@ then
         slc5_ia32)    compilerv=gcc434 ;;
         slc5_*)       compilerv=gcc481 ;;
         slc6_*)       compilerv=gcc700 ;;
-        slc7_*)       compilerv=gcc820 ;;
-        cc8_* )       compilerv=gcc8   ;;
-        *)            compilerv=gcc820 ;;
+        *)            compilerv=gcc10 ;;
     esac
     echo ${osarch}_${compilerv}
 else
