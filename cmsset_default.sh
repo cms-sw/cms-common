@@ -44,8 +44,8 @@ then
 fi
 
 # aliases
-cmsenv(){ eval `scramv1 runtime -sh` ; }
-cmsrel(){ scramv1 project CMSSW $@; }
+function cmsenv(){ eval `scramv1 runtime -sh` ; }
+function cmsrel(){ scramv1 project CMSSW $@; }
 export -f cmsenv
 export -f cmsrel
 
