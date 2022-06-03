@@ -46,8 +46,8 @@ fi
 # aliases
 function cmsenv(){ eval `scramv1 runtime -sh` ; }
 function cmsrel(){ scramv1 project CMSSW $@; }
-export -f cmsenv
-export -f cmsrel
+export -f cmsenv >/dev/null 2>&1
+export -f cmsrel >/dev/null 2>&1
 
 if [ -f $SITECONFIG_PATH/JobConfig/cmsset_local.sh ]; then
         . $SITECONFIG_PATH/JobConfig/cmsset_local.sh
