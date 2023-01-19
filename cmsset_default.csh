@@ -18,7 +18,7 @@ endif
 if ( ! ${?SCRAM_ARCH}) then
     setenv SCRAM_ARCH `sh -c ${cms_basedir}/common/cmsarch`
     if ( ! -d $here/${SCRAM_ARCH}/etc/profile.d ) then
-      setenv SCRAM_ARCH @SCRAM_ARCH@
+      setenv SCRAM_ARCH `echo ${SCRAM_ARCH} | cut -d_ -f1 | sed -E 's/^(cs|cc|amla|rocky|rhel)/el/'`_`echo ${SCRAM_ARCH} | cut -d_ -f2-`
     endif
 endif
 
