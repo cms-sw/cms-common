@@ -41,17 +41,17 @@ cmsos()
           fi
         elif egrep -q "Red Hat Enterprise" /etc/redhat-release 2>/dev/null; then
           if [ ${version} -gt 7 ] ; then
-            os="rhel"
+            os="el"
           fi
         fi
         echo "${os}${version}_${cpuarch}"
       fi
     elif egrep -q "Alma\s*Linux" /etc/redhat-release 2>/dev/null; then
       version=`egrep "Alma\s*Linux" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
-      echo "alma${version}_${cpuarch}"
+      echo "el${version}_${cpuarch}"
     elif egrep -q "Rocky\s*Linux" /etc/redhat-release 2>/dev/null; then
       version=`egrep "Rocky\s*Linux" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
-      echo "rocky${version}_${cpuarch}"
+      echo "el${version}_${cpuarch}"
     elif grep -q Scientific /etc/rocks-release 2>/dev/null; then
         version=`grep DISTRIB_RELEASE rocks-release | sed 's/DISTRIB_RELEASE="\([0-9]*\).*/\1/'`
         echo slc${version}_ia32
