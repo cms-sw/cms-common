@@ -1,0 +1,78 @@
+#!/bin/bash -e
+
+# check for CMSSW environment
+if [ -z "$CMSSW_BASE" ]; then
+	echo '$CMSSW_BASE not set'
+	exit 1
+fi
+
+# check for python3 in actual CMSSW area
+if ! (cd $CMSSW_BASE && scram tool info python3 >& /dev/null); then
+	echo "$CMSSW_VERSION does not provide python3"
+	exit 1
+fi
+
+# get info from existing python
+PYPATH=$(which python3)
+PYHOME=$(dirname $PYPATH)
+PYVERSION=$(python3 --version | cut -d' ' -f2)
+PYVERSHORT=$(echo $PYVERSION | cut -d'.' -f1-2)
+PYVERSHORTER=$(echo $PYVERSION | cut -d'.' -f1)
+PYNAME=python$PYVERSHORT
+
+# create venv directories
+VENVDIR=$CMSSW_BASE/venv/$SCRAM_ARCH
+DIRS=(
+$VENVDIR \
+$VENVDIR/bin \
+$VENVDIR/include \
+$VENVDIR/lib/$PYNAME/site-packages \
+)
+for DIR in ${DIRS[@]}; do
+	mkdir -p $DIR
+done
+(cd $VENVDIR; ln -s lib lib64)
+
+# create venv config
+cat << EOF > $VENVDIR/pyvenv.cfg
+home = $PYHOME
+include-system-site-packages = true
+version = $PYVERSION
+EOF
+
+# link venv executables
+EXES=(
+python$PYVERSHORTER \
+python$PYVERSHORT \
+)
+for EXE in ${EXES[@]}; do
+	ln -s $PYPATH $VENVDIR/bin/$EXE
+done
+
+# set up scram hook infrastructure if missing
+HOOKDIR=$CMSSW_BASE/config/SCRAM/hooks/runtime
+HOOKFILE=${HOOKDIR}-hook
+if [ ! -f "$HOOKFILE" ]; then
+	mkdir -p $HOOKDIR
+	cat << 'EOF' > $HOOKFILE
+#!/bin/bash
+SCRIPT_DIR=$(dirname $0)
+if [ -e ${SCRIPT_DIR}/runtime ] ; then
+  for tool in $(find ${SCRIPT_DIR}/runtime -type f | sort) ; do
+    [ -x $tool ] && $tool
+  done
+fi
+EOF
+	chmod +x $HOOKFILE
+fi
+
+# install hook for venv
+HOOK=${HOOKDIR}/py3-venv
+cat << 'EOF' > $HOOK
+#!/bin/bash
+echo "RUNTIME:path:prepend:PATH=${LOCALTOP}/venv/$SCRAM_ARCH/bin"
+EOF
+chmod +x $HOOK
+
+# instructions to activate venv hook and update environment
+echo "scram-venv succeeded! please call 'cmsenv' now"
