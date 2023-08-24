@@ -16,7 +16,7 @@ then
     SCRAM_ARCH=$(${cms_basedir}/common/cmsarch)
     if [ ! -d ${here}/${SCRAM_ARCH}/etc/profile.d ]
     then
-      SCRAM_ARCH=$(echo ${SCRAM_ARCH} | cut -d_ -f1 | sed -E 's/^(cs|cc|amla|rocky|rhel)/el/')_$(echo ${SCRAM_ARCH} | cut -d_ -f2-)
+      SCRAM_ARCH=$(echo ${SCRAM_ARCH} | cut -d_ -f1 | sed -E 's/^(cs|cc|alma|rocky|rhel)/el/')_$(echo ${SCRAM_ARCH} | cut -d_ -f2-)
     fi
     export SCRAM_ARCH
 fi
