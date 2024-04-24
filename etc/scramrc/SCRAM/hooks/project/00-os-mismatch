@@ -1,0 +1,23 @@
+#!/bin/bash
+sys_cmsos=$(BUILD_ARCH="" cmsos)
+sys_arch=$(echo ${sys_cmsos}    | cut -d_ -f2)
+scram_arch=$(echo ${SCRAM_ARCH} | cut -d_ -f2 | sed -e 's/^\(cc\|cs\)/el/')
+
+if [ "${sys_arch}" != "${scram_arch}" ] ; then
+  echo "ERROR: You are trying to use SCRAM architecture '${scram_arch}' on '${sys_arch}' host. This will not build/run.
+       Please either set/use correct SCRAM_ARCH or move to a suitable '${scram_arch}' host."
+  exit 1
+fi
+
+sys_os=$(echo ${sys_cmsos}    | cut -d_ -f1)
+scram_os=$(echo ${SCRAM_ARCH} | cut -d_ -f1)
+scram_os1=$(echo ${scram_os} | sed -e 's/^\(cc\|cs\)/el/')
+
+if [ "${sys_os}" != "${scram_os1}" ] ; then
+  scram_os1=$(echo ${scram_os} | sed -e 's/^\(cc\|cs\|slc\)/el/')
+  echo "WARNING: You are trying to use SCRAM architecture '${scram_os}' on host with operating system '${sys_os}'.
+         This is not supported and likely will not work and you might get build/runtime errors. Please either
+         - use correct SCRAM_ARCH to match your host's operating system.
+         - OR use 'cmssw-${scram_os1}' script to start a singularity container (http://cms-sw.github.io/singularity.html)
+         - OR use host which has '${scram_os}' installed e.g. lxplus8 for el8, lxplus9 for el9 or lxplus7 for slc7."
+fi
