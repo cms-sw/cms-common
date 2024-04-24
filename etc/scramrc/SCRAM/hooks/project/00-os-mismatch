@@ -16,7 +16,7 @@ scram_os1=$(echo ${scram_os} | sed -e 's/^\(cc\|cs\)/el/')
 if [ "${sys_os}" != "${scram_os1}" ] ; then
   scram_os1=$(echo ${scram_os} | sed -e 's/^\(cc\|cs\|slc\)/el/')
   echo "WARNING: You are trying to use SCRAM architecture '${scram_os}' on host with operating system '${sys_os}'.
-         This might not work and you might get build/runtime errors. Please either
+         This is not supported and likely will not work and you might get build/runtime errors. Please either
          - use correct SCRAM_ARCH to match your host's operating system.
          - OR use 'cmssw-${scram_os1}' script to start a singularity container (http://cms-sw.github.io/singularity.html)
          - OR use host which has '${scram_os}' installed e.g. lxplus8 for el8, lxplus9 for el9 or lxplus7 for slc7."
