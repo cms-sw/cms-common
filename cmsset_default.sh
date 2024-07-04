@@ -46,8 +46,10 @@ fi
 # aliases
 function cmsenv(){ eval `scramv1 runtime -sh` ; }
 function cmsrel(){ scramv1 project CMSSW $@; }
-export -f cmsenv >/dev/null 2>&1
-export -f cmsrel >/dev/null 2>&1
+
+#zsh: export -f does not work so ignore the following errors
+export -f cmsenv >/dev/null 2>&1 || true
+export -f cmsrel >/dev/null 2>&1 || true
 
 if [ -f $SITECONFIG_PATH/JobConfig/cmsset_local.sh ]; then
         . $SITECONFIG_PATH/JobConfig/cmsset_local.sh
