@@ -7,15 +7,12 @@ then
     compilerv=gcc820
     case $osarch in
         osx*)         compilerv=gcc$(gcc -dumpversion | sed 's|\.||g') ;;
-        fc18_*)       compilerv=gcc491 ;;
-        fc19_armv7hl) compilerv=gcc481 ;;
-        fc19_aarch64) compilerv=gcc490 ;;
-        fc22_ppc64le) compilerv=gcc530 ;;
-        fc24_ppc64le) compilerv=gcc620 ;;
+        fc38_*)       compilerv=gcc13 ;;
+        fc40_*)       compilerv=gcc14 ;;
         slc5_ia32)    compilerv=gcc434 ;;
         slc5_*)       compilerv=gcc481 ;;
         slc6_*)       compilerv=gcc700 ;;
-        *)            compilerv=gcc10 ;;
+        *)            compilerv=gcc12 ;;
     esac
     echo ${osarch}_${compilerv}
 else
