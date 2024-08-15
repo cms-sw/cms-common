@@ -8,8 +8,10 @@ if [ "X${sver}" = "X" ] ; then
     echo "Unable to find current working directory, may be directory was deleted." >&2
     exit 1
   fi
+  #Search 10 parents dirs to find .SCRAM
+  #Mostly scram based project do not have more than 10 level deep dir structure
   COUNT=1
-  while [ $COUNT -le 20 ] && [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] && [ "$dir" != "" ] && [ "$dir" != "." ]; do
+  while [ $COUNT -le 10 ] && [ ! -d ${dir}/.SCRAM ] && [ "$dir" != "/" ] && [ "$dir" != "" ] && [ "$dir" != "." ] ; do
     dir=$(dirname $dir)
     (( COUNT++ ))
   done
@@ -18,7 +20,12 @@ if [ "X${sver}" = "X" ] ; then
     if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
   fi
   if [ "X$sver" = "X" ] ; then
-    if [ -f ${cms_basedir}/share/etc/default-scram/V2 ] ; then sver="V2_99_99" ; fi
+    #Use SCRAM V3 if system python3 is available otherwise fallback to SCRAM V2
+    default_scram="V3"
+    if [ "$(env -i command -v python3)" = "" ] || [ ! -e ${cms_basedir}/share/etc/default-scram/V3 ] ; then
+      default_scram="V2"
+    fi
+    [ -e ${cms_basedir}/share/etc/default-scram/${default_scram} ] && sver="${default_scram}_99_99"
   fi
   if [ "X$sver" = "X" ] ; then
     if [ -f ${cms_basedir}/share/etc/default-scramv1-version ] ; then
