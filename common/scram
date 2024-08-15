@@ -21,9 +21,11 @@ if [ "X${sver}" = "X" ] ; then
   fi
   if [ "X$sver" = "X" ] ; then
     #Use SCRAM V3 if system python3 is available otherwise fallback to SCRAM V2
-    default_scram="V3"
-    if [ "$(env -i command -v python3)" = "" ] || [ ! -e ${cms_basedir}/share/etc/default-scram/V3 ] ; then
-      default_scram="V2"
+    default_scram="V2"
+    if env -i python3 -V >/dev/null 2>&1 ; then
+      if [ -e ${cms_basedir}/share/etc/default-scram/V3 ] ; then
+        default_scram="V3"
+      fi
     fi
     [ -e ${cms_basedir}/share/etc/default-scram/${default_scram} ] && sver="${default_scram}_99_99"
   fi
