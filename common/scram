@@ -23,7 +23,7 @@ if [ "X${sver}" = "X" ] ; then
     #Use SCRAM V2 for slc6 or if system python3 not available otherwise use SCRAM V3
     default_scram="V2"
     case $(${cms_basedir}/common/cmsos) in
-      slc6_*|el6_) ;;
+      slc6_*|el6_*) ;;
       * )
         if env -i python3 -V >/dev/null 2>&1 ; then
           if [ -e ${cms_basedir}/share/etc/default-scram/V3 ] ; then
