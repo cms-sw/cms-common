@@ -20,13 +20,18 @@ if [ "X${sver}" = "X" ] ; then
     if [ -f ${dir}/config/scram_version ] ; then sver=$(cat ${dir}/config/scram_version) ; fi
   fi
   if [ "X$sver" = "X" ] ; then
-    #Use SCRAM V3 if system python3 is available otherwise fallback to SCRAM V2
+    #Use SCRAM V2 for slc6 or if system python3 not available otherwise use SCRAM V3
     default_scram="V2"
-    if env -i python3 -V >/dev/null 2>&1 ; then
-      if [ -e ${cms_basedir}/share/etc/default-scram/V3 ] ; then
-        default_scram="V3"
-      fi
-    fi
+    case $(${cms_basedir}/common/cmsos) in
+      slc6_*|el6_) ;;
+      * )
+        if env -i python3 -V >/dev/null 2>&1 ; then
+          if [ -e ${cms_basedir}/share/etc/default-scram/V3 ] ; then
+            default_scram="V3"
+          fi
+        fi
+      ;;
+    esac
     [ -e ${cms_basedir}/share/etc/default-scram/${default_scram} ] && sver="${default_scram}_99_99"
   fi
   if [ "X$sver" = "X" ] ; then
