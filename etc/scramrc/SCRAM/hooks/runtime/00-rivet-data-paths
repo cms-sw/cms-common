@@ -1,0 +1,8 @@
+#!/bin/bash
+cmssw_dir="src/GeneratorInterface/RivetInterface/data"
+rivet_data="."
+for dir in ${RELEASETOP} ${LOCALTOP} ; do
+  [ -e ${dir}/${cmssw_dir} ] && rivet_data="${dir}/${cmssw_dir}:${rivet_data}"
+done
+[ "${RIVET_REF_PATH}" = "" ]  && echo "RUNTIME:variable:RIVET_REF_PATH=${rivet_data}"
+[ "${RIVET_INFO_PATH}" = "" ] && echo "RUNTIME:variable:RIVET_INFO_PATH=${rivet_data}"
