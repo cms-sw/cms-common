@@ -21,6 +21,12 @@ then
     export SCRAM_ARCH
 fi
 
+#ZSH: load bash bashcompinit for command auto completion
+if [[ $(ps -p$$ --no-headers -o cmd | cut -d' ' -f1) =~ ^.*zsh$ ]] ; then
+  autoload -U +X compinit && compinit -u
+  autoload -U +X bashcompinit && bashcompinit
+fi
+
 for arch in share ${SCRAM_ARCH} ; do
   if [ -d $here/${arch}/etc/profile.d ]
   then
