@@ -24,7 +24,7 @@ fi
 for arch in share ${SCRAM_ARCH} ; do
   if [ -d $here/${arch}/etc/profile.d ]
   then
-    for pkg in $(/bin/ls $here/${arch}/etc/profile.d/ | grep 'S.*[.]sh')
+    for pkg in $(/bin/ls $here/${arch}/etc/profile.d/ | env -u GREP_OPTIONS grep 'S.*[.]sh')
     do
           source $here/${arch}/etc/profile.d/$pkg
     done
