@@ -1,5 +1,5 @@
 #!/bin/bash
 case $SCRAM_ARCH in
-  slc6_*|slc7_*) echo "RUNTIME:variable:LC_ALL=C" ;;
+  slc6_*|slc7_*|el8_*|el9_*) echo "RUNTIME:variable:LC_ALL=C" ;;
   * ) ;;
 esac
