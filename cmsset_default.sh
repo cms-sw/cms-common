@@ -23,7 +23,7 @@ fi
 
 #ZSH: load bash bashcompinit for command auto completion
 if [[ $(ps -p$$ --no-headers -o cmd | cut -d' ' -f1) =~ ^.*zsh$ ]] ; then
-  autoload -U +X compinit && compinit -u
+  autoload -U +X compinit >/dev/null 2>&1 && compinit -u
   autoload -U +X bashcompinit && bashcompinit
 fi
 
@@ -32,7 +32,7 @@ for arch in share ${SCRAM_ARCH} ; do
   then
     for pkg in $(/bin/ls $here/${arch}/etc/profile.d/ | env -u GREP_OPTIONS grep 'S.*[.]sh')
     do
-          source $here/${arch}/etc/profile.d/$pkg
+          source $here/${arch}/etc/profile.d/$pkg >/dev/null 2>&1
     done
     unset pkg
   fi
