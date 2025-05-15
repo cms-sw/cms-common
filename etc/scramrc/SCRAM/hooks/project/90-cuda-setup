@@ -7,7 +7,7 @@ cuda_tool="config/toolbox/$SCRAM_ARCH/tools/selected/cuda.xml"
 # Check if nvcc is accessiable if not then try to look for cuda local installation or use cuda-runtime
 CUDA_BASE=$(grep '="CUDA_BASE"' ${cuda_tool} | tr ' ' '\n' | grep -E "/external/cuda(-runtime|)/" | sed 's|.*="||;s|".*||g')
 [ ! -e "${CUDA_BASE}/bin/nvcc" ] || exit 0
-echo "WARNING: ${CUDA_BASE}/bin/nvcc not accessiable."
+echo "WARNING: ${CUDA_BASE}/bin/nvcc not accessible."
 
 CUDA_VERSION=$(echo ${CUDA_BASE} | sed -E 's|.*/||;s|-[0-9a-f]{32}$||')
 CUDA_DIR=""
