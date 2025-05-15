@@ -1,0 +1,39 @@
+#!/bin/bash
+# Only setup cuda if cuda-runtime and cuda tools are setup
+cuda_runtime_tool="config/toolbox/$SCRAM_ARCH/tools/selected/cuda-runtime.xml"
+cuda_tool="config/toolbox/$SCRAM_ARCH/tools/selected/cuda.xml"
+[ -e ${cuda_runtime_tool} -a -e ${cuda_tool} ] || exit 0
+
+# Check if nvcc is accessiable if not then try to look for cuda local installation or use cuda-runtime
+CUDA_BASE=$(grep '="CUDA_BASE"' ${cuda_tool} | tr ' ' '\n' | grep -E "/external/cuda(-runtime|)/" | sed 's|.*="||;s|".*||g')
+[ ! -e "${CUDA_BASE}/bin/nvcc" ] || exit 0
+echo "WARNING: ${CUDA_BASE}/bin/nvcc not accessiable."
+
+CUDA_VERSION=$(echo ${CUDA_BASE} | sed -E 's|.*/||;s|-[0-9a-f]{32}$||')
+CUDA_DIR=""
+arch=$(uname -m)
+el_ver=rhel$(cmsos | cut -d_ -f1 | sed 's|[a-z]*||')
+cuda_rel_path="${arch}/${el_ver}/external/cuda/${CUDA_VERSION}"
+if [ "${USER_CUDA_BASE}" != "" -a -d "${USER_CUDA_BASE}/${cuda_rel_path}" ] ; then
+  CUDA_DIR="${USER_CUDA_BASE}/${cuda_rel_path}"
+  echo "Setting up cuda ${CUDA_VERSION} from ${CUDA_DIR}"
+fi
+if [ "${CUDA_DIR}" = "" ] ; then
+  CUDA_RUNTIME_BASE=$(grep '="CUDA_RUNTIME_BASE"' ${cuda_runtime_tool} | tr ' ' '\n' | grep "/external/cuda-runtime/" | sed 's|.*="||;s|".*||g')
+  CUDA_INSTALL_SCRIPT="${CUDA_RUNTIME_BASE}/bin/install-cuda.sh"
+  CUDA_DIR="${CUDA_RUNTIME_BASE}"
+  echo "WARNING: Setting up cuda-runtime environment only."
+  echo "         You should be able to run but build/compile cuda code locally will not work."
+  echo "         In order to build/compile cuda code locally please set USER_CUDA_BASE env and"
+  echo "         run \"${CUDA_INSTALL_SCRIPT}\" to install cuda under \$USER_CUDA_BASE/${cuda_rel_path}"
+fi
+if [ "${CUDA_DIR}" != "" ] ; then
+  for xml in $(grep -lER '/external/cuda(-runtime|)/' config/toolbox/${SCRAM_ARCH}/tools/selected) ; do
+    sed -i -e "s|${CUDA_BASE}|${CUDA_DIR}|" $xml
+    tool_cache=.SCRAM/${SCRAM_ARCH}/tools/$(echo $xml | sed 's|.*/||;s|.xml$||' | tr 'A-Z' 'a-z')
+    [ -e ${tool_cache} ] && sed -i -e "s|${CUDA_BASE}|${CUDA_DIR}|" ${tool_cache}
+  done
+  if [ -e .SCRAM/${SCRAM_ARCH}/RuntimeCache.json ] ; then
+    sed -i -e "s|${CUDA_BASE}|${CUDA_DIR}|" .SCRAM/${SCRAM_ARCH}/RuntimeCache.json
+  fi
+fi
