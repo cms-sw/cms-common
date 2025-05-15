@@ -26,6 +26,8 @@ if [ "${CUDA_DIR}" = "" ] ; then
   echo "         You should be able to run but build/compile cuda code locally will not work."
   echo "         In order to build/compile cuda code locally please set USER_CUDA_BASE env and"
   echo "         run \"${CUDA_INSTALL_SCRIPT}\" to install cuda under \$USER_CUDA_BASE/${cuda_rel_path}"
+  echo "         and run the following from the SCRAM developer area"
+  echo "         scram build setup-cuda"
 fi
 if [ "${CUDA_DIR}" != "" ] ; then
   for xml in $(grep -lER '/external/cuda(-runtime|)/' config/toolbox/${SCRAM_ARCH}/tools/selected) ; do
