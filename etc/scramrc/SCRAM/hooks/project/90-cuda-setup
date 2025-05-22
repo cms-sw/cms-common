@@ -7,32 +7,37 @@ cuda_tool="config/toolbox/$SCRAM_ARCH/tools/selected/cuda.xml"
 # Check if nvcc is accessiable if not then try to look for cuda local installation or use cuda-runtime
 CUDA_BASE=$(grep '="CUDA_BASE"' ${cuda_tool} | tr ' ' '\n' | grep -E "/external/cuda(-runtime|)/" | sed 's|.*="||;s|".*||g')
 [ ! -e "${CUDA_BASE}/bin/nvcc" ] || exit 0
-echo "WARNING: ${CUDA_BASE}/bin/nvcc not accessible."
+echo "WARNING: The CUDA compiler (nvcc) is not accessible at:"
+echo "         ${CUDA_BASE}/bin/nvcc"
+echo ""
 
 CUDA_VERSION=$(echo ${CUDA_BASE} | sed -E 's|.*/||;s|-[0-9a-f]{32}$||')
 CUDA_DIR=""
 arch=$(uname -m)
 el_ver=rhel$(cmsos | cut -d_ -f1 | sed 's|[a-z]*||')
 cuda_rel_path="${arch}/${el_ver}/external/cuda/${CUDA_VERSION}"
+echo "Checking for CUDA installation paths:"
+echo -n "  - \$USER_CUDA_BASE/${cuda_rel_path} ... "
 if [ "${USER_CUDA_BASE}" != "" ] ; then
-  echo "Checking for cuda version ${CUDA_VERSION} under ${USER_CUDA_BASE}"
   if [ -d "${USER_CUDA_BASE}/${cuda_rel_path}" ] ; then
-    echo "  Found ${USER_CUDA_BASE}/${cuda_rel_path}"
+    echo "[ OK ]"
     CUDA_DIR="${USER_CUDA_BASE}/${cuda_rel_path}"
   else
-    echo "  Unable to find ${USER_CUDA_BASE}/${cuda_rel_path} installation"
+    echo "[ NO ]"
   fi
+else
+  echo "[ NO ]"
 fi
 if [ "${CUDA_DIR}" = "" ] ; then
   CUDA_SYSTEM_VER=$(echo ${CUDA_VERSION} | cut -d. -f1,2)
-  echo "Checking system paths for cuda ${CUDA_VERSION} or ${CUDA_SYSTEM_VER}"
   for ver in ${CUDA_VERSION} ${CUDA_SYSTEM_VER} ; do
+    echo -n "  - /usr/local/cuda-${ver} ... "
     if [ -e "/usr/local/cuda-${ver}/bin/nvcc" ] ; then
-      echo "  Found /usr/local/cuda-${ver}"
+      echo "[ OK ]"
       CUDA_DIR="/usr/local/cuda-${ver}"
       break
     else
-      echo "  Unable to find /usr/local/cuda-${ver} installation"
+      echo "[ NO ]"
     fi
   done
 fi
@@ -40,13 +45,19 @@ if [ "${CUDA_DIR}" = "" ] ; then
   CUDA_RUNTIME_BASE=$(grep '="CUDA_RUNTIME_BASE"' ${cuda_runtime_tool} | tr ' ' '\n' | grep "/external/cuda-runtime/" | sed 's|.*="||;s|".*||g')
   CUDA_INSTALL_SCRIPT="${CUDA_RUNTIME_BASE}/bin/install-cuda.sh"
   CUDA_DIR="${CUDA_RUNTIME_BASE}"
-  echo "WARNING: Setting up cuda-runtime environment only. You should be able to run cuda applications."
-  echo "  As cuda development environment is not available, so you will not be able to build cuda sources locally."
-  echo "  In order to build/compile cuda code locally please set USER_CUDA_BASE env and"
-  echo "  run \"${CUDA_INSTALL_SCRIPT}\""
-  echo "  to install cuda under \$USER_CUDA_BASE/${cuda_rel_path}"
-  echo "  and run the following from the SCRAM developer area to setup cuda tool"
-  echo "    scram build setup-cuda"
+  echo "
+WARNING:
+  Setting up *CUDA runtime environment only*.
+  You should be able to run CUDA applications.
+  However, the CUDA development environment is not available,
+  so you will NOT be able to build CUDA sources locally.
+
+To enable local CUDA development:
+  1. Set the USER_CUDA_BASE environment variable.
+  2. From your SCRAM developer area, run:
+       \$(scram tool tag cuda-runtime CUDA_RUNTIME_BASE)/bin/install-cuda.sh
+       scram build setup-cuda
+     to configure the CUDA development tools."
 fi
 if [ "${CUDA_DIR}" != "" ] ; then
   for xml in $(grep -lER '/external/cuda(-runtime|)/' config/toolbox/${SCRAM_ARCH}/tools/selected) ; do
