@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+import sys
+import argparse
+import subprocess
+
+parser = argparse.ArgumentParser(prog=sys.argv[0], description='Trace a function via gdb')
+parser.add_argument("function", help="Function to trace")
+parser.add_argument("program", help="Program to trace")
+parser.add_argument("rest", nargs=argparse.REMAINDER, help="Arguments to the program")
+parser.add_argument("--disablePLT", action="store_true", help="Disable the PLT entry (can be useful to avoid 'duplicates' for functions in shared libraries)")
+parser.add_argument("--startAfterFunction", default=None, type=str, help="Enable tracing only after this function has been called. For example, for cmsRun parallel section use this argument with ScheduleItems::initMisc function")
+
+args= parser.parse_args()
+
+script = [
+    "set pagination off",
+    "set breakpoint pending on",
+]
+
+runIssued = False
+if args.startAfterFunction:
+    script.extend([
+        f"break {args.startAfterFunction}",
+        "run",
+        # clear the brakepoint after hitting it
+        f"clear {args.startAfterFunction}"
+    ])
+    runIssued = True
+    # then add additional breakpoint according as normally
+
+script.extend([
+    # breakpoint for the function
+    "break "+args.function,
+    "command",
+])
+
+if args.disablePLT:
+    # disable the plt entry
+    # hardcoding to breakpoint 1.1 for simplicity
+    script.append("disa 1.1")
+
+script.extend([
+    "where",
+    "continue",
+    "end",
+])
+if runIssued:
+    script.append("continue")
+else:
+    script.append("run")
+script.append("quit")
+
+cmd = ["gdb", "--args", args.program] + args.rest
+
+p = subprocess.run(cmd, input="\n".join(script), text=True)
+sys.exit(p.returncode)
