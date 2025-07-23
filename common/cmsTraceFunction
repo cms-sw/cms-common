@@ -49,7 +49,7 @@ if runIssued:
     script.append("continue")
 else:
     script.append("run")
-script.append("quit")
+script.append("quit $_exitcode")
 
 cmd = ["gdb", "--args", args.program] + args.rest
 
