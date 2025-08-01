@@ -8,10 +8,11 @@ parser = argparse.ArgumentParser(prog=sys.argv[0], description='Trace a function
 parser.add_argument("function", help="Function to trace")
 parser.add_argument("program", help="Program to trace")
 parser.add_argument("rest", nargs=argparse.REMAINDER, help="Arguments to the program")
+parser.add_argument("-f", default="", help="Comma-separated list of additional functions to trace")
 parser.add_argument("--disablePLT", action="store_true", help="Disable the PLT entry (can be useful to avoid 'duplicates' for functions in shared libraries)")
 parser.add_argument("--startAfterFunction", default=None, type=str, help="Enable tracing only after this function has been called. For example, for cmsRun parallel section use this argument with ScheduleItems::initMisc function")
 
-args= parser.parse_args()
+args = parser.parse_args()
 
 script = [
     "set pagination off",
@@ -29,27 +30,33 @@ if args.startAfterFunction:
     runIssued = True
     # then add additional breakpoint according as normally
 
-script.extend([
-    # breakpoint for the function
-    "break "+args.function,
-    "command",
-])
+def breakFunction(function):
+    script.extend([
+        # breakpoint for the function
+        "break "+function,
+        "command",
+    ])
 
-if args.disablePLT:
-    # disable the plt entry
-    # hardcoding to breakpoint 1.1 for simplicity
-    script.append("disa 1.1")
+    if args.disablePLT:
+        # disable the plt entry
+        # hardcoding to breakpoint 1.1 for simplicity
+        script.append("disa 1.1")
 
-script.extend([
-    "where",
-    "continue",
-    "end",
-])
+    script.extend([
+        "where",
+        "continue",
+        "end",
+    ])
+
+breakFunction(args.function)
+for f in args.f.split(","):
+    breakFunction(f)
+
 if runIssued:
     script.append("continue")
 else:
     script.append("run")
-script.append("quit")
+script.append("quit $_exitcode")
 
 cmd = ["gdb", "--args", args.program] + args.rest
 
