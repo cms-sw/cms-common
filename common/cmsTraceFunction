@@ -11,6 +11,7 @@ parser.add_argument("rest", nargs=argparse.REMAINDER, help="Arguments to the pro
 parser.add_argument("-f", default="", help="Comma-separated list of additional functions to trace")
 parser.add_argument("--disablePLT", action="store_true", help="Disable the PLT entry (can be useful to avoid 'duplicates' for functions in shared libraries)")
 parser.add_argument("--startAfterFunction", default=None, type=str, help="Enable tracing only after this function has been called. For example, for cmsRun parallel section use this argument with ScheduleItems::initMisc function")
+parser.add_argument("--abort", action="store_true", help="Terminate the trace with non-zero exit code on the first breakpoint of traced function instead of continuing")
 
 args = parser.parse_args()
 
@@ -42,11 +43,12 @@ def breakFunction(function):
         # hardcoding to breakpoint 1.1 for simplicity
         script.append("disa 1.1")
 
-    script.extend([
-        "where",
-        "continue",
-        "end",
-    ])
+    script.append("where")
+    if args.abort:
+        script.append("quit 1")
+    else:
+        script.append("continue")
+    script.append("end")
 
 breakFunction(args.function)
 for f in args.f.split(","):
