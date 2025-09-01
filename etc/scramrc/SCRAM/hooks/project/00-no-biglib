@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 # Create no-biglib file in developers area if available in release
 if [ -e ${RELEASETOP}/.SCRAM/${SCRAM_ARCH}/no-bigproduct ] ; then
   touch ${LOCALTOP}/.SCRAM/${SCRAM_ARCH}/no-bigproduct
