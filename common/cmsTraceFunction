@@ -19,6 +19,15 @@ script = [
     "set pagination off",
     "set breakpoint pending on",
 ]
+# Same signals as in InitRootHandlers
+for signal in ["SIGILL", "SIGSEGV", "SIGBUS", "SIGTERM", "SIGFPE", "SIGABRT"]:
+    script.extend([
+        "catch signal "+signal,
+        "command",
+        "thread apply all bt",
+        "quit 1",
+        "end",
+    ])
 
 runIssued = False
 if args.startAfterFunction:
