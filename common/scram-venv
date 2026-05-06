@@ -14,7 +14,7 @@ fi
 
 # get info from existing python
 PYPATH=$(which python3)
-PYHOME=$(dirname $PYPATH)
+PYHOME=$(dirname $(readlink -f $PYPATH))
 PYVERSION=$(python3 --version | cut -d' ' -f2)
 PYVERSHORT=$(echo $PYVERSION | cut -d'.' -f1-2)
 PYVERSHORTER=$(echo $PYVERSION | cut -d'.' -f1)
