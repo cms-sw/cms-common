@@ -5,7 +5,7 @@ cuda_tool="config/toolbox/$SCRAM_ARCH/tools/selected/cuda.xml"
 [ -e ${cuda_runtime_tool} -a -e ${cuda_tool} ] || exit 0
 
 # Check if nvcc is accessiable if not then try to look for cuda local installation or use cuda-runtime
-CUDA_BASE=$(grep '="CUDA_BASE"' ${cuda_tool} | tr ' ' '\n' | grep -E "/external/cuda(-runtime|)/" | sed 's|.*="||;s|".*||g')
+CUDA_BASE=$(grep '="CUDA_BASE"\|tool .* path="' ${cuda_tool} | tr ' ' '\n' | grep -E "/external/cuda(-runtime|)/" | sed 's|.*="||;s|".*||g')
 [ ! -e "${CUDA_BASE}/bin/nvcc" ] || exit 0
 echo "WARNING: The CUDA compiler (nvcc) is not accessible at:"
 echo "         ${CUDA_BASE}/bin/nvcc"
@@ -42,7 +42,7 @@ if [ "${CUDA_DIR}" = "" ] ; then
   done
 fi
 if [ "${CUDA_DIR}" = "" ] ; then
-  CUDA_RUNTIME_BASE=$(grep '="CUDA_RUNTIME_BASE"' ${cuda_runtime_tool} | tr ' ' '\n' | grep "/external/cuda-runtime/" | sed 's|.*="||;s|".*||g')
+  CUDA_RUNTIME_BASE=$(grep '="CUDA_RUNTIME_BASE"\|tool .* path="' ${cuda_runtime_tool} | tr ' ' '\n' | grep "/external/cuda-runtime/" | sed 's|.*="||;s|".*||g')
   CUDA_INSTALL_SCRIPT="${CUDA_RUNTIME_BASE}/bin/install-cuda.sh"
   CUDA_DIR="${CUDA_RUNTIME_BASE}"
   echo "
