@@ -24,31 +24,31 @@ cmsos()
       echo suse`grep -i '^version' < /etc/SuSE-release | tr -dc '[0-9]'`
     elif [ -f /etc/fedora-release ]; then
       echo fc`sed 's/[^0-9]//g' /etc/fedora-release`_${cpuarch}
-    elif egrep -q "Red Hat Enterprise|Scientific|CentOS" /etc/redhat-release 2>/dev/null; then
-      version=`egrep "Red Hat Enterprise|Scientific|CentOS" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
+    elif grep -E -q "Red Hat Enterprise|Scientific|CentOS" /etc/redhat-release 2>/dev/null; then
+      version=`grep -E "Red Hat Enterprise|Scientific|CentOS" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
       if [ "X`uname -i`" = Xi386 ]; then
         echo slc${version}_ia32
       else
         os="slc"
-        if egrep -q "CentOS" /etc/redhat-release 2>/dev/null; then
+        if grep -E -q "CentOS" /etc/redhat-release 2>/dev/null; then
           if [ ${version} -gt 7 ] ; then
             os="cc"
-            if egrep -q " Stream " /etc/redhat-release 2>/dev/null; then
+            if grep -E -q " Stream " /etc/redhat-release 2>/dev/null; then
               os="cs"
             fi
           fi
-        elif egrep -q "Red Hat Enterprise" /etc/redhat-release 2>/dev/null; then
+        elif grep -E -q "Red Hat Enterprise" /etc/redhat-release 2>/dev/null; then
           if [ ${version} -gt 7 ] ; then
             os="el"
           fi
         fi
         echo "${os}${version}_${cpuarch}"
       fi
-    elif egrep -q "Alma\s*Linux" /etc/redhat-release 2>/dev/null; then
-      version=`egrep "Alma\s*Linux" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
+    elif grep -E -q "Alma\s*Linux" /etc/redhat-release 2>/dev/null; then
+      version=`grep -E "Alma\s*Linux" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
       echo "el${version}_${cpuarch}"
-    elif egrep -q "Rocky\s*Linux" /etc/redhat-release 2>/dev/null; then
-      version=`egrep "Rocky\s*Linux" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
+    elif grep -E -q "Rocky\s*Linux" /etc/redhat-release 2>/dev/null; then
+      version=`grep -E "Rocky\s*Linux" /etc/redhat-release | sed 's/.*[rR]elease \([0-9]*\).*/\1/'`
       echo "el${version}_${cpuarch}"
     elif grep -q Scientific /etc/rocks-release 2>/dev/null; then
         version=`grep DISTRIB_RELEASE rocks-release | sed 's/DISTRIB_RELEASE="\([0-9]*\).*/\1/'`
